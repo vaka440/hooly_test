@@ -7,7 +7,7 @@ cd invivox_test
 docker compose up -d
 ```
 
-## allez sur l'invité de commande de l'instance: ```back_symfony``` 
+## allez sur l'invité de commande de l'instance: ```back_symfony``` de Docker
 ## saisir les commandes suivantes :
 
 ```
