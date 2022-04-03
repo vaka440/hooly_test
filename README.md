@@ -1,4 +1,4 @@
-# 
+# HOOLY - TEST
 
 ```
 git clone https://github.com/vaka440/invivox_test.git
@@ -19,11 +19,3 @@ php bin/console doctrine:fixtures:load
 
 http://localhost:4201/
 
-# ce qu'il reste à faire:
-    - back:
-        - inclure DTO pour controler les données des requetes reçus
-        - controler qu'une reservation n'est pas déjà en base avant de l'ajouter
-    - front:
-        - le numéro en moins le vendredi n'est pas géré
-        - typage avec des models ne sont pas implémenté ('any' à la place)
-        - 
