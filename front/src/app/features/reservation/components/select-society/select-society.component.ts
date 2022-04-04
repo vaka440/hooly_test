@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { HttpService } from '../../services/http.service';
-import { ReservationStoreService } from '../../services/reservation-store.service';
 
 @Component({
   selector: 'app-select-society',
@@ -13,13 +12,11 @@ export class SelectSocietyComponent implements OnInit {
   public societyForm!: FormGroup;
   societies$!: Observable<any>;
 
-
-  constructor(private formBuilder: FormBuilder, private httpService: HttpService, private reservationStoreService: ReservationStoreService) {
+  constructor(private formBuilder: FormBuilder, private httpService: HttpService) {
     this.societyForm = this.formBuilder.group({
       societyId: ['', Validators.required],
     });
     this.societies$ = httpService.getSocieties();
-
   }
 
   ngOnInit(): void {

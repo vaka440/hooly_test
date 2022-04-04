@@ -1,10 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpService } from '../../services/http.service';
 import { ReservationStoreService } from '../../services/reservation-store.service';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import { ReservationDto } from '../../models/reservation-dto';
-import { combineLatest, Observable, tap } from 'rxjs';
+import { combineLatest, Observable, Subscription, tap } from 'rxjs';
 import { SocietyDto } from '../../models/society-dto';
 
 export const MY_DATE_FORMATS = {
@@ -27,21 +26,22 @@ export const MY_DATE_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
   ]
 })
-export class SelectDateComponent implements OnInit {
+export class SelectDateComponent implements OnInit, OnDestroy {
   @Input() societyObs!:Observable<SocietyDto>;
   minDate = new Date(new Date().setDate(new Date().getDate() + 1));
   maxDate = new Date(new Date().setDate(new Date().getDate() + 365));
   datesRejectedArr = <string[]>[];
   dateForm: FormGroup;
+  sub!: Subscription;
 
-  constructor(private formBuilder: FormBuilder, private httpService: HttpService, private reservationStoreService: ReservationStoreService) {
+  constructor(private formBuilder: FormBuilder, private reservationStoreService: ReservationStoreService) {
     this.dateForm = this.formBuilder.group({
       date: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
-    combineLatest({
+    this.sub = combineLatest({
       society: this.societyObs,
       reservations: this.reservationStoreService.getReservationsObs()
     })
@@ -70,7 +70,6 @@ export class SelectDateComponent implements OnInit {
     return !this.datesRejectedArr.some(v => day === v);
   };
 
-
   getDatesInRange(startDate: Date, endDate: Date) {
     const date = new Date(startDate.getTime());
     const dates = [];
@@ -84,5 +83,7 @@ export class SelectDateComponent implements OnInit {
     return dates;
   }
 
-
+  ngOnDestroy(): void {
+      this.sub.unsubscribe();
+  }
 }
