@@ -1,7 +1,7 @@
 # HOOLY - TEST
 
 ```
-git clone https://github.com/vaka440/invivox_test.git
+git clone https://github.com/vaka440/hooly_test.git
 cd invivox_test
 
 docker compose up -d
