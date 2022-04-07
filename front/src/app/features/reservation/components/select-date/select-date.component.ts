@@ -27,12 +27,20 @@ export const MY_DATE_FORMATS = {
   ]
 })
 export class SelectDateComponent implements OnInit, OnDestroy {
-  @Input() societyObs!:Observable<SocietyDto>;
+  _data: any;
+  @Input() set data(values: any) {
+    this._data = values;
+    console.log(values);
+    if (values) this.action(values);
+  }
+  get data() {
+    return this._data;
+  }
   minDate = new Date(new Date().setDate(new Date().getDate() + 1));
   maxDate = new Date(new Date().setDate(new Date().getDate() + 365));
   datesRejectedArr = <string[]>[];
   dateForm: FormGroup;
-  sub!: Subscription;
+
 
   constructor(private formBuilder: FormBuilder, private reservationStoreService: ReservationStoreService) {
     this.dateForm = this.formBuilder.group({
@@ -41,24 +49,24 @@ export class SelectDateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.sub = combineLatest({
-      society: this.societyObs,
-      reservations: this.reservationStoreService.getReservationsObs()
-    })
-    .subscribe((data: { society: any, reservations: ReservationDto[]}) => {
-      this.datesRejectedArr = [];
-      data.reservations.forEach((reservation: ReservationDto) => {
-        if (reservation.society.id === data.society.societyId) {
-          const dateStart = new Date(reservation.day.dateBegin.date);
-          const dateEnd = new Date(reservation.day.dateEnd.date);
-          this.datesRejectedArr.push(...this.getDatesInRange(dateStart, dateEnd));
-        } else {
-          const dates = [];
-          dates.push(new Date(reservation.day.dateReservation.date).toISOString().slice(0, 10));
-          this.datesRejectedArr.push(...dates);
-        }
-      });
-    })
+  }
+
+  action(data: any) {
+    const society = data[0];
+    const reservations = data[1];
+
+    this.datesRejectedArr = [];
+    reservations.forEach((reservation: ReservationDto) => {
+      if (reservation.society.id === society.societyId) {
+        const dateStart = new Date(reservation.day.dateBegin.date);
+        const dateEnd = new Date(reservation.day.dateEnd.date);
+        this.datesRejectedArr.push(...this.getDatesInRange(dateStart, dateEnd));
+      } else {
+        const dates = [];
+        dates.push(new Date(reservation.day.dateReservation.date).toISOString().slice(0, 10));
+        this.datesRejectedArr.push(...dates);
+      }
+    });
   }
 
   createFormGroup(): FormGroup {
@@ -84,6 +92,6 @@ export class SelectDateComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      this.sub.unsubscribe();
+
   }
 }

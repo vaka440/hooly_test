@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { combineLatestWith, Observable, Subscription } from 'rxjs';
+import { combineLatest, combineLatestWith, Observable, Subscription, tap } from 'rxjs';
 import { ReservationSave } from '../../models/reservation-save';
 import { HttpService } from '../../services/http.service';
 import { ReservationStoreService } from '../../services/reservation-store.service';
@@ -8,6 +8,8 @@ import { SelectDateComponent } from '../select-date/select-date.component';
 import { SelectLocationComponent } from '../select-location/select-location.component';
 import { SelectSocietyComponent } from '../select-society/select-society.component';
 import { SelectUserComponent } from '../select-user/select-user.component';
+
+type reservationFormType = {society: any, user: any, no: any, date: any};
 
 @Component({
   selector: 'app-reservation',
@@ -26,6 +28,7 @@ export class ReservationComponent implements OnInit, OnDestroy {
   loading = false;
   sub!: Subscription;
   subLoading!: Subscription;
+  selectDateData$: any;
 
   constructor(private httpService: HttpService, private reservationStoreService: ReservationStoreService, private formBuilder: FormBuilder, private cd: ChangeDetectorRef) {
     this.reservations$ = this.reservationStoreService.getReservationsObs();
@@ -48,10 +51,15 @@ export class ReservationComponent implements OnInit, OnDestroy {
       this.httpService.setReservations(data[0].userId,  data[1].societyId,);
     })
     // écoute si il y a un chargement de données provenant de l'api
-    this.subLoading = this.reservationStoreService.getLoading().subscribe(loading => {
+    this.subLoading = this.reservationStoreService.getLoading().subscribe((loading: boolean) => {
       this.loading = loading;
       this.cd.detectChanges();
     });
+    //
+    this.selectDateData$ = combineLatest([
+      this.reservationForm.controls['society'].valueChanges,
+      this.reservationStoreService.getReservationsObs()
+    ])
   }
 
   onRegister() {
@@ -76,7 +84,8 @@ export class ReservationComponent implements OnInit, OnDestroy {
     this.reservationForm.controls['no'].reset();
   }
 
-  conv(values: any): ReservationSave {
+  conv(values: reservationFormType): ReservationSave {
+console.log(values)
     const date = new Date(this.reservationForm.value.date.date);
     const dateConv = new Date(date.setDate(date.getDate() + 1)).toISOString().slice(0, 10);
     return {date: dateConv, no: values.no.no, societyId: values.society.societyId, userId: values.user.userId} as ReservationSave;

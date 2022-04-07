@@ -14,8 +14,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Observable, of } from 'rxjs';
 import { findComponent } from 'src/app/spec-helpers/element.spec-helper';
-import { reservations } from 'src/app/spec-helpers/spec-helpers';
+import { reservations, society1 } from 'src/app/spec-helpers/spec-helpers';
 import { ReservationDto } from '../../models/reservation-dto';
+import { SocietyDto } from '../../models/society-dto';
 import { HttpService } from '../../services/http.service';
 import { ReservationStoreService } from '../../services/reservation-store.service';
 import { ReservationListComponent } from '../reservation-list/reservation-list.component';
@@ -72,17 +73,30 @@ describe('ReservationComponent', () => {
     reservationListComponent = findComponent(fixture, 'app-reservation-list');
   });
 
-
-
   it('should create', () => {
 
     expect(component).toBeTruthy()
     expect(selectUserComponent).toBeTruthy();
     expect(selectSocietyComponent).toBeTruthy();
     expect(reservationListComponent).toBeTruthy();
+    expect(selectDateComponent).toBeTruthy();
+    expect(selectLocationComponent).toBeTruthy();
 
-    //expect(selectDateComponent.properties.societyObs).toHaveBeenCalled();
-
+    const fakeFormSociety = { societyId: 1};
+    const fakeData = [fakeFormSociety, reservations];
+    let componentDate = selectDateComponent.componentInstance;
+    component.reservationForm.controls['society'].setValue(fakeFormSociety);
+    fixture.detectChanges();
+    expect(componentDate.data).toEqual(fakeData);
   });
 
+  it('dateComponent:data combine for dateComponent', () => {
+
+    const fakeFormSociety = { societyId: 1};
+    const fakeData = [fakeFormSociety, reservations];
+    let componentDate = selectDateComponent.componentInstance;
+    component.reservationForm.controls['society'].setValue(fakeFormSociety);
+    fixture.detectChanges();
+    expect(componentDate.data).toEqual(fakeData);
+  });
 });

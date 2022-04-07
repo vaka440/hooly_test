@@ -15,3 +15,8 @@ export const reservations: ReservationDto[] = [
     user: {id: 1, username: 'foodtrack 1'} as UserDto
   }
 ];
+
+export const society1: SocietyDto = {
+  id: 1,
+  name: 'société 1'
+};
