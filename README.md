@@ -3,8 +3,8 @@
 - l'entreprise hooly dispose de 7 emplacements, le vendredi 6
 - un camion peut choisir un emplacement et une seule fois par semaine
 
-créer une interface avec des selects (entreprise hooly, camions...)
-et un date select qui se met à jour automatiquement en fonction des emplacements choisie
+créer une IHM avec des selects (entreprise hooly, camions...)
+et un date select qui se met à jour automatiquement en fonction des emplacements choisies
 
 
 ```
